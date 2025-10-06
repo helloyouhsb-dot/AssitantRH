@@ -1,4 +1,4 @@
-/* styles/style.css */
+/* styles/style.css - DESIGN AMÉLIORÉ */
 * {
     margin: 0;
     padding: 0;
@@ -6,9 +6,9 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     line-height: 1.6;
-    color: #333;
+    color: #2d3748;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px;
@@ -18,9 +18,448 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     background: white;
-    border-radius: 15px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    min-height: 80vh;
+}
+
+/* Header amélioré */
+header {
+    background: linear-gradient(135deg, #1a365d 0%, #2d3748 100%);
+    color: white;
+    padding: 50px 40px;
+    text-align: center;
+    position: relative;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><circle cx="50" cy="50" r="2" fill="white"/></svg>') repeat;
+}
+
+header h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+    position: relative;
+}
+
+header p {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    font-weight: 300;
+    position: relative;
+}
+
+/* Configuration API */
+.api-config {
+    background: #f7fafc;
+    padding: 25px 40px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.api-status {
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    background: #fed7d7;
+    color: #c53030;
+    border: 2px solid #feb2b2;
+}
+
+.api-status.connected {
+    background: #c6f6d5;
+    color: #276749;
+    border-color: #9ae6b4;
+}
+
+.config-btn {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+}
+
+.config-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+}
+
+/* Avertissement juridique */
+.legal-warning {
+    background: linear-gradient(135deg, #fffaf0 0%, #fed7d7 100%);
+    border: 2px solid #fed7d7;
+    padding: 20px 40px;
+    margin: 0;
+    border-radius: 0;
+    font-size: 0.9rem;
+    text-align: center;
+    border-left: 4px solid #e53e3e;
+}
+
+.legal-warning strong {
+    color: #c53030;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+/* Contenu principal - Layout amélioré */
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 600px;
+}
+
+.form-section {
+    padding: 50px;
+    background: #f7fafc;
+    position: relative;
+}
+
+.result-section {
+    padding: 50px;
+    background: white;
+    border-left: 1px solid #e2e8f0;
+    position: relative;
+}
+
+/* Titres sections */
+.form-section h2, .result-section h2 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 35px;
+    font-weight: 600;
+    position: relative;
+}
+
+.form-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+.result-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    border-radius: 2px;
+}
+
+/* Formulaire amélioré */
+.form-group {
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 1rem;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+input:hover, select:hover {
+    border-color: #cbd5e0;
+}
+
+/* Bouton principal */
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    position: relative;
     overflow: hidden;
 }
 
-/* ... (copiez tout le CSS que je vous ai donné précédemment) ... */
+.submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.submit-btn:hover::before {
+    left: 100%;
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:active {
+    transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.submit-btn:disabled::before {
+    display: none;
+}
+
+/* Loading amélioré */
+.loading {
+    text-align: center;
+    padding: 50px 20px;
+    display: none;
+}
+
+.spinner {
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading p {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin-bottom: 8px;
+}
+
+.loading p:last-child {
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+/* Résultats améliorés */
+.result {
+    display: none;
+}
+
+.contract-result {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.contract-result h3 {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    color: white;
+    padding: 25px;
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.contract-content {
+    padding: 35px;
+    max-height: 500px;
+    overflow-y: auto;
+    line-height: 1.8;
+    background: #fafafa;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-bottom: none;
+    font-size: 0.95rem;
+}
+
+.contract-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.contract-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.contract-content::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 4px;
+}
+
+.contract-content::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+.download-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    border: none;
+    padding: 18px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+}
+
+.download-btn:hover {
+    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+}
+
+/* Section d'information */
+.info-section {
+    margin-top: 50px;
+    padding: 30px;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.info-section h3 {
+    color: #2d3748;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.info-section ol {
+    text-align: left;
+    padding-left: 25px;
+    line-height: 1.8;
+}
+
+.info-section li {
+    margin-bottom: 12px;
+    color: #4a5568;
+    font-size: 1rem;
+}
+
+.info-section strong {
+    color: #2d3748;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .result-section {
+        border-left: none;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .form-section, .result-section {
+        padding: 35px 25px;
+    }
+    
+    .api-config {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        border-radius: 12px;
+    }
+    
+    header {
+        padding: 35px 20px;
+    }
+    
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .form-section, .result-section {
+        padding: 25px 15px;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.result {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* États de focus accessibles */
+input:focus-visible, 
+select:focus-visible, 
+button:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
