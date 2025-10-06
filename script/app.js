@@ -1,8 +1,8 @@
 // scripts/app.js - VERSION FINALE SIMPLIFIÉE
 class RHAssistant {
     constructor() {
-        // REMPLACEZ CETTE URL PAR CELLE DE VOTRE BACKEND RENDER
-        this.backendURL = 'https://votre-backend.render.com';
+        // REMPLACEZ PAR VOTRE VRAIE URL RENDER :
+        this.backendURL = 'https://assitantrh.onrender.com'; // ← ICI !
         this.initializeApp();
     }
 
