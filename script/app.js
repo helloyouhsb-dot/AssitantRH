@@ -1,3 +1,8 @@
+// Testez si le serveur répond au moins
+fetch('https://assitantrh.onrender.com')
+.then(r => r.text())
+.then(console.log)
+.catch(console.error);
 // scripts/app.js - VERSION FINALE SIMPLIFIÉE
 class RHAssistant {
     constructor() {
