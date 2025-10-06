@@ -1,15 +1,14 @@
-// scripts/app.js - GÉNÉRATEUR DE DOCUMENTS RH AVEC DEEPSEEK
-
+// scripts/app.js - VERSION FINALE SIMPLIFIÉE
 class RHAssistant {
     constructor() {
-        this.apiKey = localStorage.getItem('deepseek_api_key') || '';
+        // REMPLACEZ CETTE URL PAR CELLE DE VOTRE BACKEND RENDER
+        this.backendURL = 'https://votre-backend.render.com';
         this.initializeApp();
     }
 
     initializeApp() {
         document.addEventListener('DOMContentLoaded', () => {
             this.setupEventListeners();
-            this.updateAPIStatus();
             this.setDefaultDate();
         });
     }
@@ -20,63 +19,10 @@ class RHAssistant {
         if (contractForm) {
             contractForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
         }
-
-        // Configuration API
-        const configBtn = document.getElementById('configAPI');
-        if (configBtn) {
-            configBtn.addEventListener('click', () => this.configureAPIKey());
-        }
     }
 
-    // ==================== GESTION API ====================
-    configureAPIKey() {
-        const key = prompt(`🔐 Configuration de l'API DeepSeek
-
-Entrez votre clé API DeepSeek :
-(Obtenez une clé gratuite sur https://platform.deepseek.com)
-
-Votre clé commencera par "sk-" et restera stockée localement dans votre navigateur.`);
-
-        if (key && key.startsWith('sk-')) {
-            this.apiKey = key;
-            localStorage.setItem('deepseek_api_key', key);
-            this.updateAPIStatus();
-            alert('✅ Clé API configurée avec succès !');
-            return true;
-        } else if (key) {
-            alert('❌ Format de clé invalide. La clé doit commencer par "sk-".');
-            return false;
-        }
-        return false;
-    }
-
-    updateAPIStatus() {
-        const statusElement = document.getElementById('apiStatus');
-        if (statusElement) {
-            if (this.apiKey) {
-                statusElement.textContent = '✅ API Configurée';
-                statusElement.className = 'api-status connected';
-            } else {
-                statusElement.textContent = '❌ API Non configurée';
-                statusElement.className = 'api-status';
-            }
-        }
-    }
-
-    // ==================== GESTION FORMULAIRE ====================
     async handleFormSubmit(e) {
         e.preventDefault();
-
-        // Vérifier la configuration API
-        if (!this.apiKey) {
-            alert('⚠️ Veuillez d\'abord configurer votre clé API DeepSeek');
-            if (this.configureAPIKey()) {
-                // Si configurée, relancer la soumission
-                setTimeout(() => this.handleFormSubmit(e), 100);
-            }
-            return;
-        }
-
         this.showLoading(true);
 
         try {
@@ -110,94 +56,34 @@ Votre clé commencera par "sk-" et restera stockée localement dans votre naviga
         }
     }
 
-    // ==================== GÉNÉRATION AVEC IA ====================
     async generateDocument(formData) {
-        const prompt = this.buildGenerationPrompt(formData);
+        console.log('📤 Envoi des données au backend...', formData);
         
-        console.log('🔄 Appel de l\'API DeepSeek...');
-        const response = await this.callDeepSeekAPI(prompt);
-        
-        console.log('✅ Document généré avec succès');
-        return response;
-    }
-
-    buildGenerationPrompt(formData) {
-        return `
-GÉNÈRE UN DOCUMENT RH PROFESSIONNEL ET COMPLET
-
-TYPE DE DOCUMENT : ${this.getDocumentTypeLabel(formData.documentType)}
-
-INFORMATIONS À INTÉGRER :
-- ENTREPRISE : ${formData.companyName}
-- ADRESSE : ${formData.companyAddress}
-- SALARIÉ : ${formData.employeeName}
-- POSTE : ${formData.position}
-- SALAIRE : ${formData.salary}€ brut mensuel
-- DATE DE DÉBUT : ${this.formatDate(formData.startDate)}
-
-CONSIGNES DE GÉNÉRATION :
-1. Crée un document professionnel et structuré
-2. Utilise un langage juridique approprié mais accessible
-3. Inclus toutes les sections essentielles pour ce type de document
-4. Respecte le format standard des documents RH français
-5. Sois précis et complet dans les clauses
-
-Le document doit être prêt à être utilisé après relecture.
-`;
-    }
-
-    async callDeepSeekAPI(prompt) {
-        const response = await fetch('https://api.deepseek.com/chat/completions', {
+        const response = await fetch(`${this.backendURL}/generate-document`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.apiKey}`
+            'Accept': 'application/json'
             },
-            body: JSON.stringify({
-                model: 'deepseek-chat',
-                messages: [
-                    {
-                        role: 'system',
-                        content: `Tu es un expert en ressources humaines et droit du travail français.
-                        
-RÔLE :
-- Générer des documents RH professionnels et structurés
-- Utiliser un langage clair et juridiquement approprié
-- Adapter le contenu aux informations fournies
-- Créer des documents prêts à être utilisés après relecture
-
-STYLE :
-- Professionnel mais accessible
-- Structuré avec des sections claires
-- Précis dans les formulations
-- Complet dans les informations`
-                    },
-                    {
-                        role: 'user',
-                        content: prompt
-                    }
-                ],
-                temperature: 0.3,
-                max_tokens: 4000,
-                stream: false
-            })
+            body: JSON.stringify(formData)
         });
 
+        console.log('📥 Réponse du backend:', response.status);
+
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Erreur API DeepSeek: ${response.status} - ${errorText}`);
+            throw new Error(`Erreur serveur: ${response.status}`);
         }
 
         const data = await response.json();
+        console.log('📄 Données reçues:', data);
         
-        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-            throw new Error('Réponse API invalide - Structure de données incorrecte');
+        if (!data.success) {
+            throw new Error(data.error || 'Erreur lors de la génération du document');
         }
-        
-        return data.choices[0].message.content;
+
+        return data.document;
     }
 
-    // ==================== AFFICHAGE RÉSULTATS ====================
     displayResult(content, formData) {
         const resultDiv = document.getElementById('result');
         if (resultDiv) {
@@ -205,15 +91,15 @@ STYLE :
                 <div class="contract-result">
                     <h3>📄 ${this.getDocumentTypeLabel(formData.documentType)}</h3>
                     <div class="contract-content">${this.formatContractContent(content)}</div>
-                    <button onclick="rhAssistant.downloadDocument('${formData.documentType}', '${formData.employeeName}')" class="download-btn">
+                    <button onclick="rhAssistant.downloadDocument('${formData.documentType}', '${formData.employeeName.replace(/'/g, "\\'")}')" class="download-btn">
                         💾 Télécharger le Document
                     </button>
                 </div>
             `;
             resultDiv.style.display = 'block';
             
-            // Scroll vers le résultat
-            resultDiv.scrollIntoView({ behavior: 'smooth' });
+            // Scroll doux vers le résultat
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
 
@@ -221,12 +107,12 @@ STYLE :
         const resultDiv = document.getElementById('result');
         if (resultDiv) {
             resultDiv.innerHTML = `
-                <div style="background: #f8d7da; color: #721c24; padding: 20px; border-radius: 8px; text-align: center;">
-                    <h3 style="margin-bottom: 10px;">❌ Erreur de génération</h3>
-                    <p style="margin-bottom: 15px;">${message}</p>
-                    <button onclick="rhAssistant.configureAPIKey()" class="config-btn">
-                        🔧 Reconfigurer l'API
-                    </button>
+                <div class="error-message">
+                    <h3>❌ Erreur de génération</h3>
+                    <p>${message}</p>
+                    <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                        Vérifiez votre connexion internet et réessayez.
+                    </p>
                 </div>
             `;
             resultDiv.style.display = 'block';
@@ -243,17 +129,30 @@ STYLE :
         if (submitBtn) {
             submitBtn.disabled = show;
             submitBtn.textContent = show ? '⏳ Génération en cours...' : '🚀 Générer le document';
+            
+            if (show) {
+                submitBtn.style.opacity = '0.7';
+            } else {
+                submitBtn.style.opacity = '1';
+            }
         }
     }
 
-    // ==================== FONCTIONS UTILITAIRES ====================
     formatContractContent(content) {
-        // Convertir les retours à la ligne en HTML et améliorer la lisibilité
-        return content
+        if (!content) return '<p>Aucun contenu généré</p>';
+        
+        // Nettoyer et formater le contenu
+        let formattedContent = content
             .replace(/\n/g, '<br>')
-            .replace(/(ARTICLE|CHAPITRE|SECTION|TITRE)\s+([IVXLCDM]+|\d+)/gi, '<br><strong>$1 $2</strong><br>')
-            .replace(/(ENTRE LES SOUSSIGNÉS|CONTRAT DE TRAVAIL|PROCÈS-VERBAL|ATTESTATION)/gi, '<strong>$1</strong>')
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+        // Améliorer la lisibilité des sections
+        formattedContent = formattedContent
+            .replace(/(ARTICLE|CHAPITRE|SECTION|TITRE)\s+([IVXLCDM]+|\d+)/gi, '<br><strong style="color: #2c3e50;">$1 $2</strong><br>')
+            .replace(/(ENTRE LES SOUSSIGNÉS|CONTRAT DE TRAVAIL|PROCÈS-VERBAL|ATTESTATION)/gi, '<strong style="color: #2c3e50; font-size: 1.1em;">$1</strong>');
+            
+        return formattedContent;
     }
 
     getDocumentTypeLabel(type) {
@@ -267,15 +166,6 @@ STYLE :
         return labels[type] || 'Document RH';
     }
 
-    formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric'
-        });
-    }
-
     downloadDocument(documentType, employeeName) {
         const contentElement = document.querySelector('.contract-content');
         if (!contentElement) {
@@ -283,23 +173,29 @@ STYLE :
             return;
         }
         
-        // Nettoyer le HTML pour avoir du texte brut
-        const content = contentElement.innerText || contentElement.textContent;
-        const blob = new Blob([content], { type: 'text/plain; charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        
-        // Nom du fichier
-        const fileName = `${documentType}_${employeeName.replace(/\s+/g, '_')}_${this.getCurrentDate()}.txt`;
-        a.download = fileName;
-        
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        console.log('✅ Document téléchargé:', fileName);
+        try {
+            // Nettoyer le HTML pour avoir du texte brut
+            const content = contentElement.innerText || contentElement.textContent;
+            const blob = new Blob([content], { type: 'text/plain; charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            
+            // Créer un nom de fichier propre
+            const cleanName = employeeName.replace(/[^a-zA-Z0-9]/g, '_');
+            const fileName = `${documentType}_${cleanName}_${this.getCurrentDate()}.txt`;
+            a.download = fileName;
+            
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            console.log('✅ Document téléchargé:', fileName);
+        } catch (error) {
+            console.error('Erreur téléchargement:', error);
+            alert('❌ Erreur lors du téléchargement');
+        }
     }
 
     getCurrentDate() {
@@ -316,3 +212,34 @@ const rhAssistant = new RHAssistant();
 
 // Exposer globalement pour les callbacks HTML
 window.rhAssistant = rhAssistant;
+
+// Ajouter le CSS pour le message d'erreur si pas déjà présent
+const style = document.createElement('style');
+style.textContent = `
+    .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 25px;
+        border-radius: 10px;
+        border: 1px solid #f5c6cb;
+        text-align: center;
+    }
+    
+    .error-message h3 {
+        margin-bottom: 15px;
+        color: #721c24;
+    }
+    
+    .contract-content {
+        line-height: 1.8;
+        font-size: 15px;
+        color: #333;
+    }
+    
+    .contract-content strong {
+        color: #2c3e50;
+    }
+`;
+document.head.appendChild(style);
+
+console.log('🚀 RHAI Assistant initialisé avec succès');
