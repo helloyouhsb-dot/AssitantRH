@@ -11,3 +11,16 @@ const firebaseConfig = {
 // Initialiser Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
+// Dans firebase-config.js - ajouter Stripe
+const PRICING_PLANS = {
+    free: { documentsPerMonth: 3, features: ['CDI seulement'] },
+    premium: { documentsPerMonth: 50, features: ['Tous documents', 'Export PDF', 'Sauvegarde cloud'] },
+    pro: { documentsPerMonth: 500, features: ['Tous documents', 'Support prioritaire', 'API access'] }
+};
+
+function checkDocumentLimit(userPlan) {
+    const user = getCurrentUser();
+    const monthlyUsage = await getMonthlyUsage(user.uid);
+    return monthlyUsage < PRICING_PLANS[userPlan].documentsPerMonth;
+}
