@@ -3,108 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHAI - Assistant RH IA pour PME</title>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHAI - Assistant RH IA pour PME</title>
-    <link rel="stylesheet" href="styles/style.css">
-</head>
+    <title>RHAI - Générateur de Documents RH</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+        header { background: #2563eb; color: white; padding: 30px; text-align: center; }
+        header h1 { font-size: 2em; margin-bottom: 10px; }
+        .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+        .form-section { padding: 30px; background: #f8fafc; }
+        .result-section { padding: 30px; background: white; border-left: 1px solid #e2e8f0; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #374151; }
+        input, select { width: 100%; padding: 12px; border: 2px solid #d1d5db; border-radius: 6px; font-size: 16px; }
+        input:focus, select:focus { outline: none; border-color: #2563eb; }
+        .submit-btn { width: 100%; background: #2563eb; color: white; border: none; padding: 15px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .submit-btn:hover { background: #1d4ed8; }
+        .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+        .loading { display: none; text-align: center; padding: 20px; }
+        .spinner { border: 4px solid #f3f4f6; border-top: 4px solid #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .result { display: none; }
+        .document-result { background: white; border-radius: 8px; border: 1px solid #e5e7eb; overflow: hidden; }
+        .document-result h3 { background: #374151; color: white; padding: 20px; margin: 0; }
+        .document-content { padding: 25px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; background: #f9fafb; }
+        .download-btn { width: 100%; background: #059669; color: white; border: none; padding: 15px; font-size: 16px; cursor: pointer; }
+        .download-btn:hover { background: #047857; }
+        .error-message { background: #fef2f2; color: #dc2626; padding: 20px; border-radius: 8px; border: 1px solid #fecaca; }
+        .info-section { margin-top: 30px; padding: 20px; background: #f0f9ff; border-radius: 8px; }
+        footer { text-align: center; padding: 20px; background: #f8fafc; color: #6b7280; }
+        @media (max-width: 768px) {
+            .main-content { grid-template-columns: 1fr; }
+            .result-section { border-left: none; border-top: 1px solid #e2e8f0; }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🤖 RHAI - Assistant RH Intelligent</h1>
-            <p>Générez vos documents RH conformes en 2 minutes avec l'IA</p>
+            <h1>🤖 RHAI - Documents RH</h1>
+            <p>Générez vos contrats en 2 minutes</p>
         </header>
 
-        <!-- Avertissement juridique -->
-        <div class="legal-warning">
-            <strong>⚠️ Avertissement Important :</strong>
-            Les documents générés sont fournis à titre informatif. 
-            Pour les situations complexes, consultez un professionnel du droit.
-        </div>
-
         <div class="main-content">
-            <!-- Section Formulaire -->
             <div class="form-section">
-                <h2 style="margin-bottom: 30px; color: #2c3e50;">📝 Créer un document</h2>
+                <h2 style="margin-bottom: 25px; color: #1f2937;">📝 Créer un document</h2>
                 
                 <form id="contractForm">
                     <div class="form-group">
                         <label for="documentType">Type de document :</label>
                         <select id="documentType" required>
-                            <option value="">Sélectionnez un document</option>
-                            <option value="cdi">Contrat de travail CDI</option>
-                            <option value="cdd">Contrat de travail CDD</option>
+                            <option value="">Sélectionnez</option>
+                            <option value="cdi">Contrat CDI</option>
+                            <option value="cdd">Contrat CDD</option>
                             <option value="rupture">Rupture conventionnelle</option>
-                            <option value="avenant">Avenant au contrat</option>
-                            <option value="attestation">Attestation d'emploi</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="companyName">Nom de l'entreprise :</label>
-                        <input type="text" id="companyName" placeholder="Ex: SARL Dupont & Cie" required>
+                        <label for="companyName">Nom entreprise :</label>
+                        <input type="text" id="companyName" placeholder="Votre entreprise" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="companyAddress">Adresse de l'entreprise :</label>
-                        <input type="text" id="companyAddress" placeholder="Ex: 123 Avenue de la République, 75001 Paris" required>
+                        <label for="companyAddress">Adresse :</label>
+                        <input type="text" id="companyAddress" placeholder="Adresse de l'entreprise" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="employeeName">Nom du salarié :</label>
-                        <input type="text" id="employeeName" placeholder="Ex: Marie Martin" required>
+                        <label for="employeeName">Nom salarié :</label>
+                        <input type="text" id="employeeName" placeholder="Nom du salarié" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="position">Poste occupé :</label>
-                        <input type="text" id="position" placeholder="Ex: Développeuse web" required>
+                        <label for="position">Poste :</label>
+                        <input type="text" id="position" placeholder="Poste occupé" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="salary">Salaire mensuel brut (€) :</label>
-                        <input type="number" id="salary" placeholder="Ex: 3000" min="0" step="100" required>
+                        <label for="salary">Salaire brut (€) :</label>
+                        <input type="number" id="salary" placeholder="3000" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="startDate">Date de début :</label>
+                        <label for="startDate">Date début :</label>
                         <input type="date" id="startDate" required>
                     </div>
 
-                    <button type="submit" class="submit-btn">
-                        🚀 Générer le document
-                    </button>
+                    <button type="submit" class="submit-btn">🚀 Générer le document</button>
                 </form>
 
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
-                    <p style="margin-top: 20px; font-size: 16px;">Génération du document en cours...</p>
-                    <p style="font-size: 14px; color: #666; margin-top: 10px;">L'IA travaille pour vous !</p>
+                    <p>Génération en cours...</p>
                 </div>
             </div>
 
-            <!-- Section Résultats -->
             <div class="result-section">
-                <h2 style="margin-bottom: 30px; color: #2c3e50;">📄 Document généré</h2>
+                <h2 style="margin-bottom: 25px; color: #1f2937;">📄 Résultat</h2>
                 <div id="result" class="result">
-                    <!-- Le résultat s'affichera ici -->
+                    <p style="color: #6b7280; text-align: center; padding: 40px;">
+                        Votre document apparaîtra ici après génération
+                    </p>
                 </div>
                 
-                <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
-                    <h3 style="color: #2c3e50; margin-bottom: 15px;">💡 Comment ça marche ?</h3>
-                    <ol style="text-align: left; padding-left: 20px; line-height: 1.8;">
-                        <li><strong>Configurez</strong> votre clé API DeepSeek</li>
-                        <li><strong>Remplissez</strong> le formulaire avec les informations</li>
-                        <li><strong>Générez</strong> le document avec l'IA</li>
-                        <li><strong>Téléchargez</strong> et personnalisez si besoin</li>
+                <div class="info-section">
+                    <h3 style="margin-bottom: 15px; color: #1e40af;">💡 Simple et efficace</h3>
+                    <ol style="padding-left: 20px;">
+                        <li>Remplissez le formulaire</li>
+                        <li>Générez en 1 clic</li>
+                        <li>Téléchargez votre document</li>
                     </ol>
                 </div>
             </div>
         </div>
+
+        <footer>
+            <p>RHAI - Solution documents RH</p>
+        </footer>
     </div>
 
+    <script src="scripts/app.js"></script>
+</body>
+</html>
     <script src="scripts/app.js"></script>
 </body>
 </html>
