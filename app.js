@@ -1,5 +1,5 @@
 // Configuration
-const OPENAI_API_KEY = 'votre_clé_api_openai_ici'; // À remplacer par votre vraie clé
+const OPENAI_API_KEY = CONFIG.OPENAI_API_KEY;
 
 // Templates de base pour les documents
 const DOCUMENT_TEMPLATES = {
