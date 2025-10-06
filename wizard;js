@@ -1,0 +1,23 @@
+class FormWizard {
+    constructor() {
+        this.steps = ['document-type', 'company-info', 'employee-info', 'review'];
+        this.currentStep = 0;
+        this.formData = {};
+    }
+    
+    nextStep() {
+        if (this.currentStep < this.steps.length - 1) {
+            document.getElementById(this.steps[this.currentStep]).style.display = 'none';
+            this.currentStep++;
+            document.getElementById(this.steps[this.currentStep]).style.display = 'block';
+        }
+    }
+    
+    prevStep() {
+        if (this.currentStep > 0) {
+            document.getElementById(this.steps[this.currentStep]).style.display = 'none';
+            this.currentStep--;
+            document.getElementById(this.steps[this.currentStep]).style.display = 'block';
+        }
+    }
+}
